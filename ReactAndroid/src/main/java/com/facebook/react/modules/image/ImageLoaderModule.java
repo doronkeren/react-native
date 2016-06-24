@@ -17,6 +17,7 @@ import com.facebook.datasource.BaseDataSubscriber;
 import com.facebook.datasource.DataSource;
 import com.facebook.datasource.DataSubscriber;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.core.ImagePipelineFactory;
 import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
@@ -117,6 +118,13 @@ public class ImageLoaderModule extends ReactContextBaseJavaModule {
 
     Uri uri = Uri.parse(uriString);
     ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri).build();
+
+    try {
+      Fresco.getImagePipeline();
+    }
+    catch (NullPointerException e) {
+      ImagePipelineFactory.initialize(this.getReactApplicationContext());
+    }
 
     DataSource<Void> prefetchSource =
       Fresco.getImagePipeline().prefetchToDiskCache(request, mCallerContext);
